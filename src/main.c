@@ -1,4 +1,4 @@
-#include"philo.h"
+#include "../include/philo.h"
 
 void setting_rules(t_rules *rules, char *argv, int argc) // Hacer chequeo de errores en los argumentos antes de atol
 {
@@ -17,10 +17,11 @@ int	main(int argc, char *argv[])
 	if (argc < 5 || argc > 6)
 	{
 		instructions();
+		exit_error("Error: Invalid number of arguments\n");
 	}
 	rules = malloc(sizeof(t_rules));
 	if (!rules)
-		return (1);
+		exit_error("Error: Malloc failed\n");
 	setting_rules(rules, *argv, argc);
 	return (0);
 }

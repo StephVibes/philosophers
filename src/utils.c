@@ -1,23 +1,23 @@
-#include "philo.h"
+#include "../include/philo.h"
 
-static int is_digit(char c)
+static int	is_digit(char c)
 {
 	if (c >= '0' && c <= '9')
 	{
-		printf("is digit\n");
+		printf("it's a digit\n");
 		return (1);
 	}
-	printf("no is digit\n");
+	printf("it's not a digit\n");
 	return (0);
 }
 
-void exit_error(char *str)
+void	exit_error(char *str)
 {
 	printf("%s", str);
 	exit(1);
 }
 
-static char *validate_input(char *str)
+static char	*validate_input(char *str)
 {
 	int i;
 
