@@ -1,13 +1,24 @@
 #include "../include/philo.h"
 
+size_t	ft_strlen(const char *str)
+{
+	size_t i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
 static int	is_digit(char c)
 {
+	//printf("c = %c\n", c);
 	if (c >= '0' && c <= '9')
 	{
-		printf("it's a digit\n");
+		//printf("it's a digit\n");
 		return (1);
 	}
-	printf("it's not a digit\n");
+	//printf("it's not a digit\n");
 	return (0);
 }
 
@@ -17,18 +28,22 @@ void	exit_error(char *str)
 	exit(1);
 }
 
-static char	*validate_input(char *str)
+static char *validate_input(char *str)
 {
-	int i;
+	size_t	i;
+	size_t	len;
 
 	i = 0;
+	len = ft_strlen(str);
 	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
 		i++;
 	if (str[i] == '+')
 		i++;
 	else if (str[i] == '-')
 		exit_error("Error: Negative number\n");
-	if(!is_digit(str[i]))
+	while(is_digit(str[i]))
+		i++;
+	if (i != len)
 		exit_error("Error: Invalid argument\n");
 	return (&str[i]);
 }

@@ -5,6 +5,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <pthread.h>
+# include <sys/time.h>
 
 //philosopher struct
 typedef struct s_philo
@@ -25,6 +26,7 @@ typedef struct s_rules
 	int				time_to_eat; // time to eat in milliseconds
 	int				time_to_sleep; // time to sleep in milliseconds
 	int				times_must_eat; // number of times each philosopher must eat
+	struct timeval			start; // start time
 }	t_rules;
 
 // utils.c
