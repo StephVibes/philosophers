@@ -1,5 +1,32 @@
 #include "../include/philo.h"
 
+void	ft_putnbr_fd(int n, int fd)
+{
+	char c;
+
+	if (n < 0)
+	{
+		write(fd, "-", 1);
+		n = -n;
+	}
+	if (n > 9)
+		ft_putnbr_fd(n / 10, fd);
+	c = n % 10 + '0';
+	write(fd, &c, 1);
+}
+
+void	print_current_time(struct timeval start)
+{
+	struct timeval current;
+	int time;
+
+	gettimeofday(&current, NULL);
+	time = (current.tv_sec - start.tv_sec) * 1000 + (current.tv_usec - start.tv_usec) / 1000;
+	write(1, "time = ", 7);
+	ft_putnbr_fd(time, 1);
+	write(1, "ms\n", 3);
+}
+
 size_t	ft_strlen(const char *str)
 {
 	size_t i;
@@ -12,13 +39,8 @@ size_t	ft_strlen(const char *str)
 
 static int	is_digit(char c)
 {
-	//printf("c = %c\n", c);
 	if (c >= '0' && c <= '9')
-	{
-		//printf("it's a digit\n");
 		return (1);
-	}
-	//printf("it's not a digit\n");
 	return (0);
 }
 
@@ -28,7 +50,7 @@ void	exit_error(char *str)
 	exit(1);
 }
 
-static char *validate_input(char *str)
+static char	*validate_input(char *str)
 {
 	size_t	i;
 	size_t	len;

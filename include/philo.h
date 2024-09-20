@@ -27,11 +27,13 @@ typedef struct s_rules
 	int				time_to_sleep; // time to sleep in milliseconds
 	int				times_must_eat; // number of times each philosopher must eat
 	struct timeval			start; // start time
+	int			current_time; // current time
 }	t_rules;
 
 // utils.c
 long	ft_atol(char *str); // convert string to long
 void	instructions(void); // print instructions
 void	exit_error(char *str); // print error message and exit
+void	print_current_time(struct timeval start); // calculate time since start
 
 #endif
