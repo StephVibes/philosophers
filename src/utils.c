@@ -15,16 +15,14 @@ void	ft_putnbr_fd(int n, int fd)
 	write(fd, &c, 1);
 }
 
-void	print_current_time(struct timeval start)
+int	get_current_time(struct timeval start)
 {
 	struct timeval current;
 	int time;
 
 	gettimeofday(&current, NULL);
 	time = (current.tv_sec - start.tv_sec) * 1000 + (current.tv_usec - start.tv_usec) / 1000;
-	write(1, "time = ", 7);
-	ft_putnbr_fd(time, 1);
-	write(1, "ms\n", 3);
+	return (time);
 }
 
 size_t	ft_strlen(const char *str)
@@ -53,34 +51,39 @@ void	exit_error(char *str)
 static char	*validate_input(char *str)
 {
 	size_t	i;
-	size_t	len;
 
 	i = 0;
-	len = ft_strlen(str);
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+	while (*str == ' ' || (*str >= 9 && *str <= 13))
+	{
+		str++;
 		i++;
-	if (str[i] == '+')
+	}
+	if (*str == '+')
+	{
+		str++;
 		i++;
-	else if (str[i] == '-')
+	}
+	else if (*str == '-')
 		exit_error("Error: Negative number\n");
 	while(is_digit(str[i]))
 		i++;
-	if (i != len)
+	if (str[i] != '\0')
 		exit_error("Error: Invalid argument\n");
-	return (&str[i]);
+	return (str);
 }
 
 long	ft_atol(char *str)
 {
 	int i;
 	long result;
+	char *input;
 
 	i = 0;
 	result = 0;
-	str = validate_input(str);
-	while (str[i] >= '0' && str[i] <= '9')
+	input = validate_input(str);
+	while (input[i] >= '0' && input[i] <= '9')
 	{
-		result = result * 10 + str[i] - '0';
+		result = result * 10 + input[i] - '0';
 		i++;
 	}
 	if(result > 2147483647)
