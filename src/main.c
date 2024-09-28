@@ -86,15 +86,71 @@ int get_random_wait_time(int time_to_die, int time_to_eat, int time_to_sleep)
     return wait_time;
 }
 
-void	wait_for_fork(t_table *table)
+int get_dynamic_wait_time(int time_to_die, int time_to_eat, int time_to_sleep, struct timeval last_eaten)
+{
+    struct timeval current_time;
+    int time_since_last_meal;
+    int max_wait_time, wait_time;
+
+    gettimeofday(&current_time, NULL);
+    time_since_last_meal = (current_time.tv_sec - last_eaten.tv_sec) * 1000 +
+                           (current_time.tv_usec - last_eaten.tv_usec) / 1000;
+
+    // Time left until the philosopher dies
+    int time_left_to_die = time_to_die - time_since_last_meal;
+
+    // Max wait time should be less than time left to die and influenced by eating/sleeping times
+    max_wait_time = time_left_to_die / 3; // Set the max wait time as a fraction of time to die
+
+    // Make sure we don't exceed time_to_die or wait too long
+    if (max_wait_time > time_to_eat / 2)
+        max_wait_time = time_to_eat / 2; // Cap it to a fraction of time_to_eat
+
+    if (max_wait_time <= 0)
+        max_wait_time = time_to_die / 10; // Fallback wait time if too close to death
+
+    // Add a random factor (without `srand`) to avoid collisions between philosophers
+    wait_time = (rand() % max_wait_time) + (time_to_sleep / 4); // Random wait influenced by time_to_sleep
+
+    // Ensure wait time doesn't exceed the time left to die
+    if (wait_time > time_left_to_die)
+        wait_time = time_left_to_die / 2; // Safe fallback wait time if too close to death
+
+    return wait_time;
+}
+
+
+/*void	wait_for_fork(t_table *table)
 {
 	int	tt_wait;
 
 	tt_wait = get_random_wait_time(table->time_to_die, table->time_to_eat, table->time_to_sleep);
 	if (tt_wait < 0)
-		tt_wait = table->time_to_die;
+	{
+		printf("Error: Invalid wait time\n");
+		tt_wait = table->time_to_die/100;
+	}
 	usleep(tt_wait * 1000);
+}*/
+
+void	wait_for_fork(t_philo *philo)
+{
+	int	tt_wait;
+	t_table *table = philo->table;
+
+	// Calculate dynamic wait time based on time to die, eat, sleep, and last eaten time
+	tt_wait = get_dynamic_wait_time(table->time_to_die, table->time_to_eat, table->time_to_sleep, philo->last_eaten);
+
+	if (tt_wait < 0)
+		tt_wait = table->time_to_die / 10; // Default safe wait time
+
+	// Sleep for calculated wait time
+	usleep(tt_wait * 1000);
+
+	// After waiting, check if the philosopher is about to die before retrying
+	check_if_philo_died(philo);
 }
+
 
 void	take_forks(t_philo *philo)
 {
@@ -111,7 +167,7 @@ void	take_forks(t_philo *philo)
 	{
 		pthread_mutex_unlock(&table->forks[philo->r_fork]);
 		table->forks_flag[philo->r_fork] = 0;
-		wait_for_fork(table);
+		wait_for_fork(philo);
 		take_forks(philo);
 	}
 	else
@@ -153,39 +209,34 @@ void	*dinner_routine(void *arg)
 	{
 		if((table->times_must_eat != -1 && philo->times_eaten >= table->times_must_eat) || table->philo_died)
 			break ;
-		// Think
+		// Thinking
 		pthread_mutex_lock(&table->print);
 		printf("%dms %d is thinking\n", get_current_time(table->start), philo->id);
 		pthread_mutex_unlock(&table->print);
-		check_if_philo_died(philo);
-
 		// Try to pick up the left and right forks (mutexes)
 		take_forks(philo);
 		// Eating
 		pthread_mutex_lock(&table->print);
 		printf("%dms %d is eating\n", get_current_time(table->start),philo->id);
 		pthread_mutex_unlock(&table->print);
-
 		// Simulate eating for `time_to_eat` milliseconds
 		usleep(table->time_to_eat * 1000);
-
 		// Update the time philosopher last ate
 		gettimeofday(&philo->last_eaten, NULL);
 		philo->times_eaten++;
-		check_if_philo_died(philo);
 		// Put down the forks
 		pthread_mutex_unlock(&table->forks[philo->r_fork]);
 		table->forks_flag[philo->r_fork] = 0;
 		pthread_mutex_unlock(&table->forks[philo->l_fork]);
 		table->forks_flag[philo->l_fork] = 0;
-
 		// Sleep
 		pthread_mutex_lock(&table->print);
 		printf("%dms %d is sleeping\n", get_current_time(table->start), philo->id);
 		pthread_mutex_unlock(&table->print);
-
 		// Simulate sleeping for `time_to_sleep` milliseconds
 		usleep(table->time_to_sleep * 1000);
+
+		check_if_philo_died(philo);
 	}
 	return (NULL);
 }
@@ -202,7 +253,6 @@ void	start_philosophers(t_table *table)
 			exit_error("Error: Failed to create philosopher thread\n");
 	}
 	i = -1;
-	// Join the threads after they're done (this keeps the main program waiting)
 	while (++i < table->num_of_philo)
 	{
 		if (pthread_join(table->philos[i].thread, NULL) != 0)
@@ -242,7 +292,5 @@ int	main(int argc, char *argv[])
 		exit_error("Error: Malloc failed\n");
 	start_table(table, argv, argc);
 	close_table(table);
-	//usleep(1000000);//
-	//print_current_time(table->start);//
 	return (0);
 }
