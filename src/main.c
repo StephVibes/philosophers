@@ -1,5 +1,8 @@
 #include "../include/philo.h"
 
+void	close_table(t_table *table);
+void	check_if_philo_died(t_philo *philo);
+
 void	setting_table(t_table *table, char **argv, int argc)
 {
 	int i;
@@ -19,7 +22,15 @@ void	setting_table(t_table *table, char **argv, int argc)
 		exit_error("Error: Malloc failed\n");
 	while (++i < table->num_of_philo)
 		pthread_mutex_init(&table->forks[i], NULL);
-	pthread_mutex_init(&table->print, NULL); //?
+	table->forks_flag = malloc(sizeof(int) * table->num_of_philo);
+	if (!table->forks_flag)
+		exit_error("Error: Malloc failed\n");
+	i = -1;
+	while(++i < table->num_of_philo)
+		table->forks_flag[i] = 0;
+	table->forks_flag[table->num_of_philo] = 0;
+	//printf("forks_flag: %d\n", table->forks_flag[table->num_of_philo]);
+	pthread_mutex_init(&table->print, NULL);
 }
 
 void	create_philos(t_table *table)
@@ -48,12 +59,96 @@ int	get_time_diff(struct timeval last_eaten)
 	return (time);
 }
 
+int pseudo_random(int min, int max)
+{
+    struct timeval time;
+    gettimeofday(&time, NULL);
+
+    // Use the microsecond part of the current time to create a pseudo-random number
+    long seed = time.tv_usec;
+
+    // Generate a number between min and max using the seed
+    return (seed % (max - min + 1)) + min;
+}
+
+// Function to calculate a random wait time
+int get_random_wait_time(int time_to_die, int time_to_eat, int time_to_sleep)
+{
+    // Calculate a maximum safe wait time (slightly less than time_to_die)
+    int max_safe_time = time_to_die - time_to_eat;
+    // Generate a random wait time within reasonable bounds
+    int wait_time = pseudo_random(time_to_eat / 2, time_to_sleep + time_to_eat);
+
+    // Ensure the wait time is within a safe limit
+    if (wait_time >= max_safe_time)
+        wait_time = max_safe_time - pseudo_random(1, 100); // Leave margin to avoid dying
+
+    return wait_time;
+}
+
+void	wait_for_fork(t_table *table)
+{
+	int	tt_wait;
+
+	tt_wait = get_random_wait_time(table->time_to_die, table->time_to_eat, table->time_to_sleep);
+	if (tt_wait < 0)
+		tt_wait = table->time_to_die;
+	usleep(tt_wait * 1000);
+}
+
+void	take_forks(t_philo *philo)
+{
+	t_table *table = philo->table;
+
+	check_if_philo_died(philo);
+	if(pthread_mutex_lock(&table->forks[philo->r_fork]) != 0)
+		exit_error("Error: Failed to lock right fork\n");
+	table->forks_flag[philo->r_fork] = 1;
+	pthread_mutex_lock(&table->print);
+	printf("%dms %d has taken a fork\n", get_current_time(table->start), philo->id);
+	pthread_mutex_unlock(&table->print);
+	if(table->forks_flag[philo->l_fork] == 1)
+	{
+		pthread_mutex_unlock(&table->forks[philo->r_fork]);
+		table->forks_flag[philo->r_fork] = 0;
+		wait_for_fork(table);
+		take_forks(philo);
+	}
+	else
+	{
+		if(pthread_mutex_lock(&table->forks[philo->l_fork]) != 0)
+			exit_error("Error: Failed to lock left fork\n");
+		table->forks_flag[philo->l_fork] = 1;
+		pthread_mutex_lock(&table->print);
+		printf("%dms %d has taken a fork\n", get_current_time(table->start), philo->id);
+		pthread_mutex_unlock(&table->print);
+	}
+}
+
+void	check_if_philo_died(t_philo *philo)
+{
+	t_table *table = philo->table;
+
+	if (table->time_to_die < get_time_diff(philo->last_eaten))
+	{
+		pthread_mutex_lock(&table->print);
+		printf("%dms %d died\n", get_current_time(table->start), philo->id);
+		pthread_mutex_unlock(&table->print);
+		pthread_mutex_unlock(&table->forks[philo->l_fork]);
+		table->forks_flag[philo->l_fork] = 0;
+		pthread_mutex_unlock(&table->forks[philo->r_fork]);
+		table->forks_flag[philo->r_fork] = 0;
+		table->philo_died = 1;
+		close_table(table);
+		exit(0);
+	}
+}
+
 void	*dinner_routine(void *arg)
 {
 	t_philo *philo = (t_philo *)arg;
 	t_table *table = philo->table;
 
-	//printf("Philosopher %d is alive\n", philo->id);
 	while (1)
 	{
 		if((table->times_must_eat != -1 && philo->times_eaten >= table->times_must_eat) || table->philo_died)
@@ -62,22 +157,10 @@ void	*dinner_routine(void *arg)
 		pthread_mutex_lock(&table->print);
 		printf("%dms %d is thinking\n", get_current_time(table->start), philo->id);
 		pthread_mutex_unlock(&table->print);
-		if (table->time_to_die < get_time_diff(philo->last_eaten))
-		{
-			pthread_mutex_lock(&table->print);
-			printf("%dms %d died\n", get_current_time(table->start) ,philo->id);
-			pthread_mutex_unlock(&table->print);
-			pthread_mutex_unlock(&table->forks[philo->l_fork]);
-			pthread_mutex_unlock(&table->forks[philo->r_fork]);
-			table->philo_died = 1;
-			break ;
-		}
+		check_if_philo_died(philo);
+
 		// Try to pick up the left and right forks (mutexes)
-		pthread_mutex_lock(&table->forks[philo->l_fork]);
-		pthread_mutex_lock(&table->forks[philo->r_fork]);
-
-		// Check if the philosopher has died
-
+		take_forks(philo);
 		// Eating
 		pthread_mutex_lock(&table->print);
 		printf("%dms %d is eating\n", get_current_time(table->start),philo->id);
@@ -89,10 +172,12 @@ void	*dinner_routine(void *arg)
 		// Update the time philosopher last ate
 		gettimeofday(&philo->last_eaten, NULL);
 		philo->times_eaten++;
-
+		check_if_philo_died(philo);
 		// Put down the forks
 		pthread_mutex_unlock(&table->forks[philo->r_fork]);
+		table->forks_flag[philo->r_fork] = 0;
 		pthread_mutex_unlock(&table->forks[philo->l_fork]);
+		table->forks_flag[philo->l_fork] = 0;
 
 		// Sleep
 		pthread_mutex_lock(&table->print);
@@ -112,8 +197,6 @@ void	start_philosophers(t_table *table)
 	i = -1;
 	while (++i < table->num_of_philo)
 	{
-		//printf("Creating philosopher %d\n", i + 1);
-		// Create a new thread for each philosopher
 		if (pthread_create(&table->philos[i].thread, NULL, &dinner_routine,
 				&table->philos[i]) != 0)
 			exit_error("Error: Failed to create philosopher thread\n");
@@ -124,7 +207,6 @@ void	start_philosophers(t_table *table)
 	{
 		if (pthread_join(table->philos[i].thread, NULL) != 0)
 			exit_error("Error: Failed to join philosopher thread\n");
-		//printf("Philosopher %d has finished eating\n", i + 1);
 	}
 }
 

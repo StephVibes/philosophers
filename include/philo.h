@@ -28,6 +28,7 @@ typedef struct s_table
 	int				times_must_eat; // number of times each philosopher must eat
 	struct timeval			start; // start time
 	pthread_mutex_t	*forks; // forks
+	int			*forks_flag; // philo died
 	pthread_mutex_t	print; // print mutex
 	int			current_time; // current time
 	int			philo_died; // philo died
