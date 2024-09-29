@@ -219,10 +219,11 @@ void	*dinner_routine(void *arg)
 		pthread_mutex_lock(&table->print);
 		printf("%dms %d is eating\n", get_current_time(table->start),philo->id);
 		pthread_mutex_unlock(&table->print);
-		// Simulate eating for `time_to_eat` milliseconds
-		usleep(table->time_to_eat * 1000);
 		// Update the time philosopher last ate
 		gettimeofday(&philo->last_eaten, NULL);
+		// Simulate eating for `time_to_eat` milliseconds
+		usleep(table->time_to_eat * 1000);
+
 		philo->times_eaten++;
 		// Put down the forks
 		pthread_mutex_unlock(&table->forks[philo->r_fork]);
