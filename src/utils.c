@@ -1,5 +1,23 @@
 #include "../include/philo.h"
 
+
+void	ft_usleep(long microseconds)
+{
+	struct timeval start;
+	struct timeval current;
+	long elapsed;
+
+	elapsed = 0;
+	gettimeofday(&start, NULL);
+	while (elapsed < microseconds)
+	{
+		usleep(50);
+		gettimeofday(&current, NULL);
+		elapsed = (current.tv_sec - start.tv_sec) * 1000000 + (current.tv_usec
+				- start.tv_usec);
+	}
+}
+
 void	ft_putnbr_fd(int n, int fd)
 {
 	char c;
@@ -21,7 +39,8 @@ int	get_current_time(struct timeval start)
 	int time;
 
 	gettimeofday(&current, NULL);
-	time = (current.tv_sec - start.tv_sec) * 1000 + (current.tv_usec - start.tv_usec) / 1000;
+	time = (current.tv_sec - start.tv_sec) * 1000 + (current.tv_usec
+			- start.tv_usec) / 1000;
 	return (time);
 }
 
@@ -50,7 +69,7 @@ void	exit_error(char *str)
 
 static char	*validate_input(char *str)
 {
-	size_t	i;
+	size_t i;
 
 	i = 0;
 	while (*str == ' ' || (*str >= 9 && *str <= 13))
@@ -65,7 +84,7 @@ static char	*validate_input(char *str)
 	}
 	else if (*str == '-')
 		exit_error("Error: Negative number\n");
-	while(is_digit(str[i]))
+	while (is_digit(str[i]))
 		i++;
 	if (str[i] != '\0')
 		exit_error("Error: Invalid argument\n");
@@ -86,7 +105,7 @@ long	ft_atol(char *str)
 		result = result * 10 + input[i] - '0';
 		i++;
 	}
-	if(result > 2147483647)
+	if (result > 2147483647)
 		exit_error("Error: Argument out of range\n");
 	return (result);
 }
@@ -94,28 +113,11 @@ long	ft_atol(char *str)
 void	instructions(void)
 {
 	printf("**************************************************\n");
-printf("** Please run:\n ./philo <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep> [number_of_times_each_philosopher_must_eat] **\n");
-printf("**************************************************\n\n");
+	printf("** Please run:\n ./philo <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep> [number_of_times_each_philosopher_must_eat] **\n");
 
-printf("**Description of Parameters:**\n");
-printf("<number_of_philosophers>\n");
-printf("   Number of philosophers at the table.\n\n");
-
-printf("<time_to_die>\n");
-printf("   Max time (in milliseconds) a philosopher can go without eating before dying.\n\n");
-
-printf("<time_to_eat>\n");
-printf("   Time (in milliseconds) it takes for a philosopher to eat.\n\n");
-
-printf("<time_to_sleep>\n");
-printf("   Time (in milliseconds) a philosopher spends sleeping.\n\n");
-
-printf("[number_of_times_each_philosopher_must_eat]\n");
-printf("   (Optional) Times each philosopher must eat before ending the simulation.\n\n");
-
-printf("**Example:**\n");
-printf("  ./philo 5 800 200 200 7\n");
-printf("  This starts the simulation with 5 philosophers, where each can survive 800 ms without eating,\n");
-printf("  takes 200 ms to eat, sleeps for 200 ms, and each philosopher must eat 7 times.\n\n");
-printf("**************************************************\n\n");
+	printf("**Example:**\n");
+	printf("  ./philo 5 800 200 200 7\n");
+	printf("  This starts the simulation with 5 philosophers, where each can survive 800 ms without eating,\n");
+	printf("  takes 200 ms to eat, sleeps for 200 ms, and each philosopher must eat 7 times.\n\n");
+	printf("**************************************************\n\n");
 }

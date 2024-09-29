@@ -41,6 +41,7 @@ long	ft_atol(char *str);                    // convert string to long
 void	instructions(void);                    // print instructions
 void	exit_error(char *str);                 // print error message and exit
 int	get_current_time(struct timeval start); // calculate time since start
+void	ft_usleep(long microseconds);		  // sleep for microseconds
 
 void	*dinner_routine(void *arg);
 

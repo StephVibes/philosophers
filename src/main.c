@@ -71,7 +71,7 @@ int	get_dynamic_wait_time(int ttd, int tte, int tts, struct timeval le)
 		printf("Error: Invalid wait time\n");
 		tt_wait = tbl->ttd/100;
 	}
-	usleep(tt_wait * 1000);
+	ft_usleep(tt_wait * 1000);
 }*/
 
 void	wait_forf(t_phl *philo)
@@ -84,7 +84,7 @@ void	wait_forf(t_phl *philo)
 	if (tt_wait < 0)
 		tt_wait = tbl->ttd / 1000; // Default safe wait time
 	// Sleep for calculated wait time
-	usleep(tt_wait * 1000);
+	ft_usleep(tt_wait * 1000);
 	check_if_philo_died(philo);
 }
 
@@ -213,7 +213,7 @@ void	eating(t_phl *philo)
 	printf("%dms %d is eating\n", get_current_time(tbl->start), philo->id);
 	pthread_mutex_unlock(&tbl->print);
 	gettimeofday(&philo->le, NULL);
-	usleep(tbl->tte * 1000);
+	ft_usleep(tbl->tte * 1000);
 	philo->te++;
 	drop_forks(philo);
 	check_if_philo_died(philo);
@@ -227,7 +227,7 @@ void	sleeping(t_phl *philo)
 	pthread_mutex_lock(&tbl->print);
 	printf("%dms %d is sleeping\n", get_current_time(tbl->start), philo->id);
 	pthread_mutex_unlock(&tbl->print);
-	usleep(tbl->tts * 1000);
+	ft_usleep(tbl->tts * 1000);
 	pthread_mutex_lock(&tbl->print);
 	printf("%dms %d is thinking\n", get_current_time(tbl->start), philo->id);
 	pthread_mutex_unlock(&tbl->print);
@@ -240,12 +240,12 @@ void	*dinner_routine(void *arg)
 
 	if(tbl->num_of_philo == 1)
 	{
-		usleep(tbl->ttd * 1000);
+		ft_usleep(tbl->ttd * 1000);
 		printf("%dms %d died\n", get_current_time(tbl->start), philo->id);
 		return (NULL);
 	}
 	if (philo->id % 2 == 0)
-		usleep(100);
+		ft_usleep(200);
 	while (tbl->philo_died == 0)
 	{
 		if ((tbl->tme != -1 && philo->te >= tbl->tme))
