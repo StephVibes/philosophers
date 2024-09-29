@@ -176,12 +176,12 @@ void	philo_fork(t_phl *philo, int ff, int sf)
 
 void	take_forks(t_phl *philo)
 {
-	check_if_philo_died(philo);
-
-	if (philo->id % 2 == 0)
+	// if (philo->id % 2 == 0)
 		philo_fork(philo, philo->rf, philo->lf);
-	else
-		philo_fork(philo, philo->lf, philo->rf);
+	// else
+	// {
+	// 	philo_fork(philo, philo->lf, philo->rf);
+	// }
 	check_if_philo_died(philo);
 }
 
@@ -238,15 +238,17 @@ void	*dinner_routine(void *arg)
 	t_phl *philo = (t_phl *)arg;
 	t_tbl *tbl = philo->tbl;
 
-	while (1)
+	if(tbl->num_of_philo == 1)
 	{
-		if(tbl->num_of_philo == 1)
-		{
-			usleep(tbl->ttd * 1000);
-			printf("%dms %d died\n", get_current_time(tbl->start), philo->id);
-			break ;
-		}
-		if ((tbl->tme != -1 && philo->te >= tbl->tme) || tbl->philo_died)
+		usleep(tbl->ttd * 1000);
+		printf("%dms %d died\n", get_current_time(tbl->start), philo->id);
+		return (NULL);
+	}
+	if (philo->id % 2 == 0)
+		usleep(100);
+	while (tbl->philo_died == 0)
+	{
+		if ((tbl->tme != -1 && philo->te >= tbl->tme))
 			break ;
 		eating(philo);
 		sleeping(philo);
