@@ -1,7 +1,7 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
-SRCS = src/main.c src/utils.c
+SRCS = src/main.c src/utils.c src/init.c
 OBJS = $(SRCS:.c=.o)
 NAME = philo
 
