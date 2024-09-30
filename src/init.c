@@ -10,6 +10,7 @@ void	start_philosophers(t_tbl *tbl)
 		if (pthread_create(&tbl->phls[i].thread, NULL, &dinner_routine,
 				&tbl->phls[i]) != 0)
 			exit_error("Error: Failed to create philosopher thread\n");
+		tbl->ready = 1;
 	}
 	i = -1;
 	while (++i < tbl->num_of_philo)
@@ -43,6 +44,7 @@ void	setting_tbl(t_tbl *tbl, char **argv, int argc)
 	while (++i < tbl->num_of_philo)
 		tbl->forks_flag[i] = 0;
 	pthread_mutex_init(&tbl->print, NULL);
+	tbl->ready = 0;
 }
 
 void	init_philos(t_tbl *tbl)
@@ -56,7 +58,7 @@ void	init_philos(t_tbl *tbl)
 		tbl->phls[i].lf = i;
 		tbl->phls[i].rf = (i + 1) % tbl->num_of_philo;
 		tbl->phls[i].te = 0;
-		tbl->phls[i].le = tbl->start;
+		tbl->phls[i].le = get_current_time();
 		tbl->phls[i].tbl = tbl;
 	}
 }

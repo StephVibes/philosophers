@@ -33,7 +33,17 @@ void	ft_putnbr_fd(int n, int fd)
 	write(fd, &c, 1);
 }
 
-int	get_current_time(struct timeval start)
+int	get_current_time(void)
+{
+	struct timeval current;
+	int time;
+
+	gettimeofday(&current, NULL);
+	time = (current.tv_sec) * 1000 + (current.tv_usec) / 1000;
+	return (time);
+}
+
+int	get_current_dif_time(struct timeval start)
 {
 	struct timeval current;
 	int time;

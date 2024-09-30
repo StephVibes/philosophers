@@ -15,7 +15,7 @@ typedef struct s_phl
 	int lf;                // left fork
 	int rf;                // right fork
 	int te;               // times eaten
-	struct timeval le; // last eaten time
+	int le; // last eaten time
 	struct s_tbl *tbl;     // table
 } t_phl;
 
@@ -34,13 +34,14 @@ typedef struct s_tbl
 	int crt_t;       // current time
 	int philo_died;         // philo died
 	t_phl *phls;        // philosophers
+	int ready;             // ready flag
 } t_tbl;
 
 // utils.c
 long	ft_atol(char *str);                    // convert string to long
 void	instructions(void);                    // print instructions
 void	exit_error(char *str);                 // print error message and exit
-int	get_current_time(struct timeval start); // calculate time since start
+int	get_current_dif_time(struct timeval start); // calculate time since start
 void	ft_usleep(long microseconds);		  // sleep for microseconds
 
 void	*dinner_routine(void *arg);
@@ -50,5 +51,6 @@ void	start_philosophers(t_tbl *tbl); // start philosophers
 void	setting_tbl(t_tbl *tbl, char **argv, int argc); // set table
 void	create_philos(t_tbl *tbl); // create philosophers
 void	start_tbl(t_tbl *tbl, char **argv, int argc); // start table
+int	get_current_time(void); // get current time
 
 #endif
