@@ -35,16 +35,15 @@ void	setting_tbl(t_tbl *tbl, char **argv, int argc)
 		tbl->tme = ft_atol(argv[5]);
 	tbl->phls = malloc(sizeof(t_phl) * tbl->num_of_philo);
 	tbl->forks = malloc(sizeof(pthread_mutex_t) * tbl->num_of_philo);
-	tbl->forks_flag = malloc(sizeof(int) * tbl->num_of_philo);
-	if (!tbl->forks || !tbl->phls || !tbl->forks_flag)
+	if (!tbl->forks || !tbl->phls)
 		exit_error("Error: Malloc failed\n");
 	while (++i < tbl->num_of_philo)
 		pthread_mutex_init(&tbl->forks[i], NULL);
 	i = -1;
-	while (++i < tbl->num_of_philo)
-		tbl->forks_flag[i] = 0;
 	pthread_mutex_init(&tbl->print, NULL);
 	tbl->ready = 0;
+	tbl->philo_died = 0;
+	pthread_mutex_init(&tbl->mtx_f, NULL);
 }
 
 void	init_philos(t_tbl *tbl)

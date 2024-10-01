@@ -1,7 +1,7 @@
 #include "../include/philo.h"
 
 void	close_tbl(t_tbl *tbl);
-void	check_if_philo_died(t_phl *philo);
+
 void	take_forks(t_phl *philo);
 
 void	drop_forks(t_phl *philo)
@@ -9,9 +9,7 @@ void	drop_forks(t_phl *philo)
 	t_tbl *tbl = philo->tbl;
 
 	pthread_mutex_unlock(&tbl->forks[philo->rf]);
-	tbl->forks_flag[philo->rf] = 0;
 	pthread_mutex_unlock(&tbl->forks[philo->lf]);
-	tbl->forks_flag[philo->lf] = 0;
 }
 
 void	take_forks(t_phl *philo)
@@ -35,19 +33,19 @@ void	take_forks(t_phl *philo)
 void	check_if_philo_died(t_phl *philo)
 {
 	t_tbl *tbl = philo->tbl;
+	int i;
 
-	if (tbl->ttd < (get_current_time() - philo->le))
+	i = -1;
+	while(++i < tbl->num_of_philo)
 	{
-		tbl->philo_died = 1;
-		pthread_mutex_lock(&tbl->print);
-		printf("%d %d died\n", get_current_dif_time(tbl->start), philo->id);
-		pthread_mutex_unlock(&tbl->print);
-		pthread_mutex_unlock(&tbl->forks[philo->lf]);
-		tbl->forks_flag[philo->lf] = 0;
-		pthread_mutex_unlock(&tbl->forks[philo->rf]);
-		tbl->forks_flag[philo->rf] = 0;
-		close_tbl(tbl);
-		exit(0);
+		if (tbl->ttd < get_current_time() - tbl->phls[i].le)
+		{
+			tbl->philo_died = 1;
+			pthread_mutex_lock(&tbl->print);
+			printf("%d %d died\n", get_current_dif_time(tbl->start), tbl->phls[i].id);
+			pthread_mutex_unlock(&tbl->print);
+			close_tbl(tbl);
+		}
 	}
 }
 
@@ -60,7 +58,7 @@ void	eating(t_phl *philo)
 	printf("%d %d is eating\n", get_current_dif_time(tbl->start), philo->id);
 	pthread_mutex_unlock(&tbl->print);
 	philo->le = get_current_time();
-	ft_usleep(tbl->tte * 1000);
+	ft_usleep(tbl->tte * 1000, philo);
 	philo->te++;
 	drop_forks(philo);
 	check_if_philo_died(philo);
@@ -74,7 +72,8 @@ void	sleeping(t_phl *philo)
 	pthread_mutex_lock(&tbl->print);
 	printf("%d %d is sleeping\n", get_current_dif_time(tbl->start), philo->id);
 	pthread_mutex_unlock(&tbl->print);
-	ft_usleep(tbl->tts * 1000);
+	ft_usleep(tbl->tts * 1000, philo);
+	check_if_philo_died(philo);
 	pthread_mutex_lock(&tbl->print);
 	printf("%d %d is thinking\n", get_current_dif_time(tbl->start), philo->id);
 	pthread_mutex_unlock(&tbl->print);
@@ -90,19 +89,20 @@ void	*dinner_routine(void *arg)
 		;
 	if(tbl->num_of_philo == 1)
 	{
-		ft_usleep(tbl->ttd * 1000);
+		ft_usleep(tbl->ttd * 1000, philo);
 		printf("%d %d died\n", get_current_dif_time(tbl->start), philo->id);
 		return (NULL);
 	}
 	if (philo->id % 2 == 0)
-		ft_usleep(100);
+		ft_usleep(100, philo);
 	while (tbl->philo_died == 0)
 	{
 		if ((tbl->tme != -1 && philo->te >= tbl->tme))
 			break ;
+		check_if_philo_died(philo);
 		eating(philo);
 		sleeping(philo);
-		//ft_usleep(50);
+		//ft_usleep(50, philo);
 		check_if_philo_died(philo);
 	}
 	return (NULL);
@@ -116,9 +116,9 @@ void	close_tbl(t_tbl *tbl)
 	while (++i < tbl->num_of_philo)
 		pthread_mutex_destroy(&tbl->forks[i]);
 	pthread_mutex_destroy(&tbl->print);
-	free(tbl->forks_flag);
 	free(tbl->forks);
 	free(tbl->phls);
+	exit(0);
 }
 
 int	main(int argc, char *argv[])

@@ -1,7 +1,7 @@
 #include "../include/philo.h"
 
 
-void	ft_usleep(long microseconds)
+void	ft_usleep(long microseconds, t_phl *philo)
 {
 	struct timeval start;
 	struct timeval current;
@@ -11,10 +11,12 @@ void	ft_usleep(long microseconds)
 	gettimeofday(&start, NULL);
 	while (elapsed < microseconds)
 	{
+		check_if_philo_died(philo);
 		usleep(50);
 		gettimeofday(&current, NULL);
 		elapsed = (current.tv_sec - start.tv_sec) * 1000000 + (current.tv_usec
 				- start.tv_usec);
+		check_if_philo_died(philo);
 	}
 }
 
