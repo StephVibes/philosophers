@@ -5,6 +5,8 @@ void	start_philosophers(t_tbl *tbl)
 	int i;
 
 	i = -1;
+	if(pthread_create(&tbl->check_death, NULL, &check_if_philo_died, tbl) != 0)
+		exit_error("Error: Failed to create check death thread\n");
 	while (++i < tbl->num_of_philo)
 	{
 		if (pthread_create(&tbl->phls[i].thread, NULL, &dinner_routine,
@@ -18,6 +20,8 @@ void	start_philosophers(t_tbl *tbl)
 		if (pthread_join(tbl->phls[i].thread, NULL) != 0)
 			exit_error("Error: Failed to join philosopher thread\n");
 	}
+	if (pthread_join(tbl->check_death, NULL) != 0)
+		exit_error("Error: Failed to join check death thread\n");
 }
 
 void	setting_tbl(t_tbl *tbl, char **argv, int argc)
@@ -35,14 +39,11 @@ void	setting_tbl(t_tbl *tbl, char **argv, int argc)
 		tbl->tme = ft_atol(argv[5]);
 	tbl->phls = malloc(sizeof(t_phl) * tbl->num_of_philo);
 	tbl->forks = malloc(sizeof(pthread_mutex_t) * tbl->num_of_philo);
-	tbl->forks_flag = malloc(sizeof(int) * tbl->num_of_philo);
-	if (!tbl->forks || !tbl->phls || !tbl->forks_flag)
+	if (!tbl->forks || !tbl->phls)
 		exit_error("Error: Malloc failed\n");
 	while (++i < tbl->num_of_philo)
 		pthread_mutex_init(&tbl->forks[i], NULL);
 	i = -1;
-	while (++i < tbl->num_of_philo)
-		tbl->forks_flag[i] = 0;
 	pthread_mutex_init(&tbl->print, NULL);
 	tbl->ready = 0;
 }

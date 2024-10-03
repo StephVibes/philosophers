@@ -28,13 +28,11 @@ typedef struct s_tbl
 	int tme;          // number of times each philosopher must eat
 	struct timeval start;   // start time
 	pthread_mutex_t *forks; // forks
-	int *forks_flag;        // philo died
-	pthread_mutex_t mtx_f; // mutex flag
 	pthread_mutex_t print;  // print mutex
-	int crt_t;       // current time
 	int philo_died;         // philo died
 	t_phl *phls;        // philosophers
 	int ready;             // ready flag
+	pthread_t check_death; // check death thread
 } t_tbl;
 
 // utils.c
@@ -45,6 +43,8 @@ int	get_current_dif_time(struct timeval start); // calculate time since start
 void	ft_usleep(long microseconds);		  // sleep for microseconds
 
 void	*dinner_routine(void *arg);
+void	*check_if_philo_died(void *arg);
+void	close_tbl(t_tbl *tbl);
 
 // init.c
 void	start_philosophers(t_tbl *tbl); // start philosophers
