@@ -12,8 +12,8 @@ void	start_philosophers(t_tbl *tbl)
 		if (pthread_create(&tbl->phls[i].thread, NULL, &dinner_routine,
 				&tbl->phls[i]) != 0)
 			exit_error("Error: Failed to create philosopher thread\n");
-		tbl->ready = 1;
 	}
+	//tbl->ready = 1;
 	i = -1;
 	while (++i < tbl->num_of_philo)
 	{
@@ -45,7 +45,7 @@ void	setting_tbl(t_tbl *tbl, char **argv, int argc)
 		pthread_mutex_init(&tbl->forks[i], NULL);
 	i = -1;
 	pthread_mutex_init(&tbl->print, NULL);
-	tbl->ready = 0;
+	//tbl->ready = 0;
 }
 
 void	init_philos(t_tbl *tbl)

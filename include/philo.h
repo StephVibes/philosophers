@@ -31,7 +31,7 @@ typedef struct s_tbl
 	pthread_mutex_t print;  // print mutex
 	int philo_died;         // philo died
 	t_phl *phls;        // philosophers
-	int ready;             // ready flag
+	//int ready;             // ready flag
 	pthread_t check_death; // check death thread
 } t_tbl;
 

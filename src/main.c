@@ -43,13 +43,13 @@ void	*check_if_philo_died(void *arg)
 				pthread_mutex_lock(&tbl->print);
 				printf("%d %d died\n", get_current_dif_time(tbl->start),
 					tbl->phls[i].id);
-				pthread_mutex_unlock(&tbl->print);
+				pthread_mutex_destroy(&tbl->print);
 				close_tbl(tbl);
 				return (NULL);
 			}
 		}
 		i = -1;
-		ft_usleep(50);
+		//ft_usleep(50);
 	}
 }
 
@@ -78,7 +78,7 @@ void	sleeping(t_phl *philo)
 	pthread_mutex_lock(&tbl->print);
 	printf("%d %d is thinking\n", get_current_dif_time(tbl->start), philo->id);
 	pthread_mutex_unlock(&tbl->print);
-	ft_usleep(50);
+	//ft_usleep(50);
 }
 
 void	*dinner_routine(void *arg)
@@ -86,15 +86,15 @@ void	*dinner_routine(void *arg)
 	t_phl *philo = (t_phl *)arg;
 	t_tbl *tbl = philo->tbl;
 
-	while (!tbl->ready)
-		;
+	// while (!tbl->ready)
+	// 	;
 	if (tbl->num_of_philo == 1)
 	{
 		ft_usleep(tbl->ttd * 1000);
 		return (NULL);
 	}
 	if (philo->id % 2 == 0)
-		ft_usleep(100);
+		ft_usleep(tbl->tte / 10);
 	while (tbl->philo_died == 0)
 	{
 		if ((tbl->tme != -1 && philo->te >= tbl->tme))
@@ -112,7 +112,6 @@ void	close_tbl(t_tbl *tbl)
 	i = -1;
 	while (++i < tbl->num_of_philo)
 		pthread_mutex_destroy(&tbl->forks[i]);
-	pthread_mutex_destroy(&tbl->print);
 	while (++i < tbl->num_of_philo)
 		pthread_detach(tbl->phls[i].thread);
 	pthread_detach(tbl->check_death);
