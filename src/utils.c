@@ -124,7 +124,6 @@ void	instructions(void)
 {
 	printf("**************************************************\n");
 	printf("** Please run:\n ./philo <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep> [number_of_times_each_philosopher_must_eat] **\n");
-
 	printf("**Example:**\n");
 	printf("  ./philo 5 800 200 200 7\n");
 	printf("  This starts the simulation with 5 philosophers, where each can survive 800 ms without eating,\n");

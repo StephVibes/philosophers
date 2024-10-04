@@ -1,14 +1,5 @@
 #include "../include/philo.h"
 
-
-void	drop_forks(t_phl *philo)
-{
-	t_tbl *tbl = philo->tbl;
-
-	pthread_mutex_unlock(&tbl->forks[philo->rf]);
-	pthread_mutex_unlock(&tbl->forks[philo->lf]);
-}
-
 void	take_forks(t_phl *philo)
 {
 	t_tbl *tbl = philo->tbl;
@@ -80,7 +71,8 @@ void	eating(t_phl *philo)
 	philo->le = get_current_time();
 	ft_usleep(tbl->tte * 1000);
 	philo->te++;
-	drop_forks(philo);
+	pthread_mutex_unlock(&tbl->forks[philo->rf]);
+	pthread_mutex_unlock(&tbl->forks[philo->lf]);
 }
 
 void	sleeping(t_phl *philo)
