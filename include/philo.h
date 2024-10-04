@@ -44,7 +44,7 @@ int	get_current_dif_time(struct timeval start); // calculate time since start
 void	ft_usleep(long microseconds);		  // sleep for microseconds
 
 void	*dinner_routine(void *arg);
-void	*check_if_philo_died(void *arg);
+void	*monitor(void *arg);
 void	close_tbl(t_tbl *tbl);
 
 // init.c
