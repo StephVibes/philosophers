@@ -1,27 +1,14 @@
 #include "../include/philo.h"
 
-void	start_philosophers(t_tbl *tbl)
-{
-	int i;
+void	setting_tbl(t_tbl *tbl, char **argv, int argc);
+void	init_philos(t_tbl *tbl);
+void	start_philosophers(t_tbl *tbl);
 
-	i = -1;
-	if(pthread_create(&tbl->check_death, NULL, &check_if_philo_died, tbl) != 0)
-		exit_error("Error: Failed to create check death thread\n");
-	while (++i < tbl->num_of_philo)
-	{
-		if (pthread_create(&tbl->phls[i].thread, NULL, &dinner_routine,
-				&tbl->phls[i]) != 0)
-			exit_error("Error: Failed to create philosopher thread\n");
-	}
-	//tbl->ready = 1;
-	i = -1;
-	while (++i < tbl->num_of_philo)
-	{
-		if (pthread_join(tbl->phls[i].thread, NULL) != 0)
-			exit_error("Error: Failed to join philosopher thread\n");
-	}
-	if (pthread_join(tbl->check_death, NULL) != 0)
-		exit_error("Error: Failed to join check death thread\n");
+void	start_tbl(t_tbl *tbl, char **argv, int argc)
+{
+	setting_tbl(tbl, argv, argc);
+	init_philos(tbl);
+	start_philosophers(tbl);
 }
 
 void	setting_tbl(t_tbl *tbl, char **argv, int argc)
@@ -29,7 +16,6 @@ void	setting_tbl(t_tbl *tbl, char **argv, int argc)
 	int	i;
 
 	i = -1;
-	gettimeofday(&tbl->start, NULL);
 	tbl->num_of_philo = ft_atol(argv[1]);
 	tbl->ttd = ft_atol(argv[2]);
 	tbl->tte = ft_atol(argv[3]);
@@ -45,7 +31,9 @@ void	setting_tbl(t_tbl *tbl, char **argv, int argc)
 		pthread_mutex_init(&tbl->forks[i], NULL);
 	i = -1;
 	pthread_mutex_init(&tbl->print, NULL);
-	//tbl->ready = 0;
+	pthread_mutex_init(&tbl->ready_mtx, NULL);
+	tbl->philo_died = 0;
+	tbl->ready = 0;
 }
 
 void	init_philos(t_tbl *tbl)
@@ -64,9 +52,33 @@ void	init_philos(t_tbl *tbl)
 	}
 }
 
-void	start_tbl(t_tbl *tbl, char **argv, int argc)
+void	start_philosophers(t_tbl *tbl)
 {
-	setting_tbl(tbl, argv, argc);
-	init_philos(tbl);
-	start_philosophers(tbl);
+	int i;
+
+	i = -1;
+
+	while (++i < tbl->num_of_philo)
+	{
+		if (pthread_create(&tbl->phls[i].thread, NULL, &dinner_routine,
+				&tbl->phls[i]) != 0)
+			exit_error("Error: Failed to create philosopher thread\n");
+		printf("philo %d created\n", tbl->phls[i].id);
+	}
+	//ft_usleep(10000);
+	gettimeofday(&tbl->start, NULL);
+	// Set the flag to 1 to allow philosophers to start
+	//pthread_mutex_lock(&tbl->ready_mtx);
+	tbl->ready = 1;
+	//pthread_mutex_unlock(&tbl->ready_mtx);
+	if(pthread_create(&tbl->check_death, NULL, &check_if_philo_died, tbl) != 0)
+		exit_error("Error: Failed to create check death thread\n");
+	i = -1;
+	while (++i < tbl->num_of_philo)
+	{
+		if (pthread_join(tbl->phls[i].thread, NULL) != 0)
+			exit_error("Error: Failed to join philosopher thread\n");
+	}
+	if (pthread_join(tbl->check_death, NULL) != 0)
+		exit_error("Error: Failed to join check death thread\n");
 }

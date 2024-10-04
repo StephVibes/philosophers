@@ -86,20 +86,25 @@ void	*dinner_routine(void *arg)
 	t_phl *philo = (t_phl *)arg;
 	t_tbl *tbl = philo->tbl;
 
-	// while (!tbl->ready)
-	// 	;
+	//pthread_mutex_lock(&tbl->ready_mtx);
+	while (tbl->ready == 0)
+		;
+		//pthread_mutex_unlock(&tbl->ready_mtx);
+	//printf("after being ready philo = %d\n", philo->id);
 	if (tbl->num_of_philo == 1)
 	{
 		ft_usleep(tbl->ttd * 1000);
 		return (NULL);
 	}
 	if (philo->id % 2 == 0)
-		ft_usleep(tbl->tte / 10);
+		ft_usleep(tbl->tte * 1000 / 10);
 	while (tbl->philo_died == 0)
 	{
 		if ((tbl->tme != -1 && philo->te >= tbl->tme))
 			break ;
+		//printf("before eating philo = %d\n", philo->id);
 		eating(philo);
+		//printf("after eating philo = %d\n", philo->id);
 		sleeping(philo);
 	}
 	return (NULL);
@@ -134,6 +139,5 @@ int	main(int argc, char *argv[])
 	if (!tbl)
 		exit_error("Error: Malloc failed\n");
 	start_tbl(tbl, argv, argc);
-	close_tbl(tbl);
 	return (0);
 }
