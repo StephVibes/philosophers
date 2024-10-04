@@ -2,8 +2,9 @@
 
 void	take_forks(t_phl *philo)
 {
-	t_tbl *tbl = philo->tbl;
+	t_tbl	*tbl;
 
+	tbl = philo->tbl;
 	if (pthread_mutex_lock(&tbl->forks[philo->rf]) != 0)
 		exit_error("Error: Failed to lock right fork\n");
 	pthread_mutex_lock(&tbl->print);
@@ -22,9 +23,10 @@ void	take_forks(t_phl *philo)
 
 void	*monitor(void *arg)
 {
-	t_tbl *tbl = (t_tbl *)arg;
-	int i;
+	t_tbl	*tbl;
+	int		i;
 
+	tbl = (t_tbl *)arg;
 	i = -1;
 	while (1)
 	{
@@ -62,8 +64,9 @@ void	*monitor(void *arg)
 
 void	eating(t_phl *philo)
 {
-	t_tbl *tbl = philo->tbl;
+	t_tbl	*tbl;
 
+	tbl = philo->tbl;
 	take_forks(philo);
 	pthread_mutex_lock(&tbl->print);
 	printf("%d %d is eating\n", get_current_dif_time(tbl->start), philo->id);
@@ -77,8 +80,9 @@ void	eating(t_phl *philo)
 
 void	sleeping(t_phl *philo)
 {
-	t_tbl *tbl = philo->tbl;
+	t_tbl	*tbl;
 
+	tbl = philo->tbl;
 	pthread_mutex_lock(&tbl->print);
 	printf("%d %d is sleeping\n", get_current_dif_time(tbl->start), philo->id);
 	pthread_mutex_unlock(&tbl->print);
@@ -90,14 +94,15 @@ void	sleeping(t_phl *philo)
 
 void	*dinner_routine(void *arg)
 {
-	t_phl *philo = (t_phl *)arg;
-	t_tbl *tbl = philo->tbl;
+	t_phl	*philo;
+	t_tbl	*tbl;
 
+	philo = (t_phl *)arg;
+	tbl = philo->tbl;
 	while (tbl->ready == 0)
 		;
 	if (philo->id % 2 == 0)
 		ft_usleep(tbl->tte * 500);
-		//ft_usleep(tbl->tte * 100);
 	while (tbl->philo_died == 0 && (tbl->tme == -1 || philo->te < tbl->tme))
 	{
 		eating(philo);
@@ -108,7 +113,7 @@ void	*dinner_routine(void *arg)
 
 void	close_tbl(t_tbl *tbl)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	pthread_mutex_destroy(&tbl->print);
@@ -122,7 +127,7 @@ void	close_tbl(t_tbl *tbl)
 
 int	main(int argc, char *argv[])
 {
-	t_tbl *tbl;
+	t_tbl	*tbl;
 
 	if (argc < 5 || argc > 6)
 	{

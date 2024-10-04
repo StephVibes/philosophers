@@ -1,11 +1,10 @@
 #include "../include/philo.h"
 
-
 void	ft_usleep(long microseconds)
 {
-	struct timeval start;
-	struct timeval current;
-	long elapsed;
+	struct timeval	start;
+	struct timeval	current;
+	long			elapsed;
 
 	elapsed = 0;
 	gettimeofday(&start, NULL);
@@ -20,7 +19,7 @@ void	ft_usleep(long microseconds)
 
 void	ft_putnbr_fd(int n, int fd)
 {
-	char c;
+	char	c;
 
 	if (n < 0)
 	{
@@ -35,8 +34,8 @@ void	ft_putnbr_fd(int n, int fd)
 
 int	get_current_time(void)
 {
-	struct timeval current;
-	int time;
+	struct timeval	current;
+	int				time;
 
 	gettimeofday(&current, NULL);
 	time = (current.tv_sec) * 1000 + (current.tv_usec) / 1000;
@@ -45,8 +44,8 @@ int	get_current_time(void)
 
 int	get_current_dif_time(struct timeval start)
 {
-	struct timeval current;
-	int time;
+	struct timeval	current;
+	int				time;
 
 	gettimeofday(&current, NULL);
 	time = (current.tv_sec - start.tv_sec) * 1000 + (current.tv_usec
@@ -56,7 +55,7 @@ int	get_current_dif_time(struct timeval start)
 
 size_t	ft_strlen(const char *str)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (str[i])
@@ -79,7 +78,7 @@ void	exit_error(char *str)
 
 static char	*validate_input(char *str)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (*str == ' ' || (*str >= 9 && *str <= 13))
@@ -103,9 +102,9 @@ static char	*validate_input(char *str)
 
 long	ft_atol(char *str)
 {
-	int i;
-	long result;
-	char *input;
+	int		i;
+	long	result;
+	char	*input;
 
 	i = 0;
 	result = 0;
@@ -122,11 +121,13 @@ long	ft_atol(char *str)
 
 void	instructions(void)
 {
-	printf("**************************************************\n");
-	printf("** Please run:\n ./philo <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep> [number_of_times_each_philosopher_must_eat] **\n");
+	printf("**************************************\n");
+	printf("**Instructions**\n");
 	printf("**Example:**\n");
 	printf("  ./philo 5 800 200 200 7\n");
-	printf("  This starts the simulation with 5 philosophers, where each can survive 800 ms without eating,\n");
-	printf("  takes 200 ms to eat, sleeps for 200 ms, and each philosopher must eat 7 times.\n\n");
-	printf("**************************************************\n\n");
+	printf("  This starts the simulation with 5 philosophers,");
+	printf("where each can survive 800 ms without eating,\n");
+	printf("  takes 200 ms to eat, sleeps for 200 ms,");
+	printf("and each philosopher must eat 7 times.\n\n");
+	printf("****************************************\n\n");
 }
