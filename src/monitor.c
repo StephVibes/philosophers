@@ -58,7 +58,12 @@ void	close_tbl(t_tbl *tbl)
 	while (++i < tbl->num_of_philo)
 		pthread_mutex_destroy(&tbl->forks[i]);
 	pthread_mutex_destroy(&tbl->print);
+	i = -1;
+	while (++i < tbl->num_of_philo)
+		pthread_join(tbl->phls[i].thread, NULL);
+	pthread_join(tbl->check_death, NULL);
 	free(tbl->forks);
 	free(tbl->phls);
+	free(tbl);
 	exit(0);
 }
