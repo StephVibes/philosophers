@@ -30,7 +30,7 @@ typedef struct s_tbl
 	struct timeval	start;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
-	pthread_t		check_death;
+	pthread_t		monitor_thr;
 	t_phl			*phls;
 }	t_tbl;
 
