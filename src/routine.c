@@ -70,4 +70,3 @@ void	sleeping(t_phl *philo)
 	pthread_mutex_unlock(&tbl->print);
 }
 
-
