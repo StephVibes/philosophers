@@ -1,5 +1,17 @@
 #include "../include/philo.h"
 
+void	print_status(t_phl *philo, char *status)
+{
+	t_tbl *tbl;
+
+	tbl = philo->tbl;
+	if (tbl->philo_died || tbl->all_ate)
+		return ;
+	pthread_mutex_lock(&tbl->print);
+	printf("%lld %d %s\n", time_elapsed(tbl->start), philo->id, status);
+	pthread_mutex_unlock(&tbl->print);
+}
+
 static int	check_philo_death(t_tbl *tbl)
 {
 	int i;
@@ -13,7 +25,7 @@ static int	check_philo_death(t_tbl *tbl)
 			pthread_mutex_lock(&tbl->print);
 			printf("%lld %d died\n", time_elapsed(tbl->start), tbl->phls[i].id);
 			pthread_mutex_unlock(&tbl->print);
-			close_tbl(tbl);
+			//close_tbl(tbl);
 			return (1);
 		}
 	}
@@ -33,7 +45,7 @@ static int	check_all_philos_ate_enough(t_tbl *tbl)
 			return (0);
 	}
 	tbl->all_ate = 1;
-	close_tbl(tbl);
+	//close_tbl(tbl);
 	return (1);
 }
 
