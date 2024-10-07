@@ -7,50 +7,60 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-// philosopher struct
 typedef struct s_phl
 {
-	pthread_t thread;          // thread
-	int id;                    // id
-	int lf;                // left fork
-	int rf;                // right fork
-	int te;               // times eaten
-	int le; // last eaten time
-	struct s_tbl *tbl;     // table
-} t_phl;
+	pthread_t		thread;
+	int				id;
+	int				lf;
+	int				rf;
+	int				te;
+	long long				le;
+	struct s_tbl	*tbl;
+}	t_phl;
 
 typedef struct s_tbl
 {
-	int num_of_philo;       // number of philosophers
-	int ttd;            // time to die in milliseconds
-	int tte;            // time to eat in milliseconds
-	int tts;          // time to sleep in milliseconds
-	int tme;          // number of times each philosopher must eat
-	struct timeval start;   // start time
-	pthread_mutex_t *forks; // forks
-	int *forks_flag;        // philo died
-	pthread_mutex_t mtx_f; // mutex flag
-	pthread_mutex_t print;  // print mutex
-	int crt_t;       // current time
-	int philo_died;         // philo died
-	t_phl *phls;        // philosophers
-	int ready;             // ready flag
-} t_tbl;
+	int				num_of_philo;
+	int				philo_died;
+	int				all_ate;
+	int				ready;
+	int				tme;
+	long long				ttd;
+	long long				tte;
+	long long				tts;
+	struct timeval	start;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	print;
+	pthread_t		monitor_thr;
+	t_phl			*phls;
+}	t_tbl;
 
 // utils.c
-long	ft_atol(char *str);                    // convert string to long
-void	instructions(void);                    // print instructions
-void	exit_error(char *str);                 // print error message and exit
-int	get_current_dif_time(struct timeval start); // calculate time since start
-void	ft_usleep(long microseconds);		  // sleep for microseconds
+long long	ft_atoll(char *str);
+void	instructions(void);
+void	exit_error(char *str);
 
-void	*dinner_routine(void *arg);
+//time.c
+long long		time_elapsed(struct timeval start);
+void	ft_usleep(long long microseconds);
+long long		get_current_time(void);
+
+//routine.c
+void	*routine(void *arg);
+void	sleeping(t_phl *philo);
+void	take_forks(t_phl *philo);;
+void	eating(t_phl *philo);
+
+
+//monitor.c
+void	print_status(t_phl *philo, char *status);
+void	*monitor(void *arg);
 
 // init.c
-void	start_philosophers(t_tbl *tbl); // start philosophers
-void	setting_tbl(t_tbl *tbl, char **argv, int argc); // set table
-void	create_philos(t_tbl *tbl); // create philosophers
-void	start_tbl(t_tbl *tbl, char **argv, int argc); // start table
-int	get_current_time(void); // get current time
+void	init_philos(t_tbl *tbl);
+void	start_philosophers(t_tbl *tbl);
+void	setting_tbl(t_tbl *tbl, char **argv, int argc);
+void	create_philos(t_tbl *tbl);
+void	destroy_mutex(t_tbl *tbl);
 
 #endif
