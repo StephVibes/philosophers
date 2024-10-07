@@ -22,6 +22,7 @@ void	setting_tbl(t_tbl *tbl, char **argv, int argc)
 	pthread_mutex_init(&tbl->print, NULL);
 	tbl->philo_died = 0;
 	tbl->ready = 0;
+	tbl->all_ate = 0;
 }
 
 void	init_philos(t_tbl *tbl)
