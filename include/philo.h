@@ -55,7 +55,6 @@ void	eating(t_phl *philo);
 //monitor.c
 void	print_status(t_phl *philo, char *status);
 void	*monitor(void *arg);
-void	close_tbl(t_tbl *tbl);
 
 // init.c
 void	init_philos(t_tbl *tbl);

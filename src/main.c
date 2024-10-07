@@ -1,6 +1,6 @@
 #include "../include/philo.h"
 
-void 	cleanup(t_tbl *tbl)
+void	cleanup(t_tbl *tbl)
 {
 	int	i;
 
@@ -31,3 +31,4 @@ int	main(int argc, char *argv[])
 	cleanup(tbl);
 	return (0);
 }
+

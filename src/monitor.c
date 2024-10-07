@@ -2,7 +2,7 @@
 
 void	print_status(t_phl *philo, char *status)
 {
-	t_tbl *tbl;
+	t_tbl	*tbl;
 
 	tbl = philo->tbl;
 	if (tbl->philo_died || tbl->all_ate)
@@ -14,7 +14,7 @@ void	print_status(t_phl *philo, char *status)
 
 static int	check_philo_death(t_tbl *tbl)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (++i < tbl->num_of_philo)
@@ -25,7 +25,6 @@ static int	check_philo_death(t_tbl *tbl)
 			pthread_mutex_lock(&tbl->print);
 			printf("%lld %d died\n", time_elapsed(tbl->start), tbl->phls[i].id);
 			pthread_mutex_unlock(&tbl->print);
-			//close_tbl(tbl);
 			return (1);
 		}
 	}
@@ -45,13 +44,13 @@ static int	check_all_philos_ate_enough(t_tbl *tbl)
 			return (0);
 	}
 	tbl->all_ate = 1;
-	//close_tbl(tbl);
 	return (1);
 }
 
 void	*monitor(void *arg)
 {
-	t_tbl *tbl = (t_tbl *)arg;
+	t_tbl *tbl;
+	tbl = (t_tbl *)arg;
 
 	while (1)
 	{
@@ -63,20 +62,3 @@ void	*monitor(void *arg)
 	}
 }
 
-void	close_tbl(t_tbl *tbl)
-{
-	int	i;
-
-	i = -1;
-	while (++i < tbl->num_of_philo)
-		pthread_mutex_destroy(&tbl->forks[i]);
-	pthread_mutex_destroy(&tbl->print);
-	i = -1;
-	while (++i < tbl->num_of_philo)
-		pthread_detach(tbl->phls[i].thread);
-	pthread_detach(tbl->monitor_thr);
-	free(tbl->forks);
-	free(tbl->phls);
-	free(tbl);
-	exit(0);
-}

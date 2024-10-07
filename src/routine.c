@@ -1,10 +1,9 @@
 #include "../include/philo.h"
 
-
 void	*routine(void *arg)
 {
-	t_phl *philo;
-	t_tbl *tbl;
+	t_phl	*philo;
+	t_tbl	*tbl;
 
 	philo = (t_phl *)arg;
 	tbl = philo->tbl;
@@ -14,10 +13,7 @@ void	*routine(void *arg)
 	{
 		if (pthread_mutex_lock(&tbl->forks[philo->rf]) != 0)
 			exit_error("Error: Failed to lock right fork\n");
-		pthread_mutex_lock(&tbl->print);
-		printf("%lld %d has taken a fork\n", time_elapsed(tbl->start),
-			philo->id);
-		pthread_mutex_unlock(&tbl->print);
+		print_status(philo, "has taken a fork");
 		ft_usleep(tbl->ttd * 1000LL);
 		return (NULL);
 	}
@@ -38,9 +34,6 @@ void	eating(t_phl *philo)
 	tbl = philo->tbl;
 	take_forks(philo);
 	print_status(philo, "is eating");
-	// pthread_mutex_lock(&tbl->print);
-	// printf("%lld %d is eating\n", time_elapsed(tbl->start), philo->id);
-	// pthread_mutex_unlock(&tbl->print);
 	philo->le = get_current_time();
 	ft_usleep(tbl->tte * 1000LL);
 	philo->te++;
@@ -56,15 +49,9 @@ void	take_forks(t_phl *philo)
 	if (pthread_mutex_lock(&tbl->forks[philo->rf]) != 0)
 		exit_error("Error: Failed to lock right fork\n");
 	print_status(philo, "has taken a fork");
-	// pthread_mutex_lock(&tbl->print);
-	// printf("%lld %d has taken a fork\n", time_elapsed(tbl->start), philo->id);
-	// pthread_mutex_unlock(&tbl->print);
 	if (pthread_mutex_lock(&tbl->forks[philo->lf]) != 0)
 		exit_error("Error: Failed to lock left fork\n");
 	print_status(philo, "has taken a fork");
-	// pthread_mutex_lock(&tbl->print);
-	// printf("%lld %d has taken a fork\n", time_elapsed(tbl->start), philo->id);
-	// pthread_mutex_unlock(&tbl->print);
 }
 
 void	sleeping(t_phl *philo)
@@ -73,12 +60,6 @@ void	sleeping(t_phl *philo)
 
 	tbl = philo->tbl;
 	print_status(philo, "is sleeping");
-	// pthread_mutex_lock(&tbl->print);
-	// printf("%lld %d is sleeping\n", time_elapsed(tbl->start), philo->id);
-	// pthread_mutex_unlock(&tbl->print);
 	ft_usleep(tbl->tts * 1000LL);
 	print_status(philo, "is thinking");
-	// pthread_mutex_lock(&tbl->print);
-	// printf("%lld %d is thinking\n", time_elapsed(tbl->start), philo->id);
-	// pthread_mutex_unlock(&tbl->print);
 }
