@@ -33,7 +33,7 @@ static int	check_philo_death(t_tbl *tbl)
 
 static int	check_all_philos_ate_enough(t_tbl *tbl)
 {
-	int i;
+	int	i;
 
 	if (tbl->tme == -1)
 		return (0);
@@ -49,9 +49,9 @@ static int	check_all_philos_ate_enough(t_tbl *tbl)
 
 void	*monitor(void *arg)
 {
-	t_tbl *tbl;
-	tbl = (t_tbl *)arg;
+	t_tbl	*tbl;
 
+	tbl = (t_tbl *)arg;
 	while (1)
 	{
 		if (check_philo_death(tbl))
@@ -61,4 +61,3 @@ void	*monitor(void *arg)
 		ft_usleep(500LL);
 	}
 }
-

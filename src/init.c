@@ -43,7 +43,7 @@ void	init_philos(t_tbl *tbl)
 
 void	start_philosophers(t_tbl *tbl)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (++i < tbl->num_of_philo)
@@ -54,7 +54,7 @@ void	start_philosophers(t_tbl *tbl)
 	}
 	gettimeofday(&tbl->start, NULL);
 	tbl->ready = 1;
-	if(pthread_create(&tbl->monitor_thr, NULL, &monitor, tbl) != 0)
+	if (pthread_create(&tbl->monitor_thr, NULL, &monitor, tbl) != 0)
 		destroy_mutex(tbl);
 	i = -1;
 	if (pthread_join(tbl->monitor_thr, NULL) != 0)

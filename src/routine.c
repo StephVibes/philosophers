@@ -29,7 +29,7 @@ void	*routine(void *arg)
 
 void	eating(t_phl *philo)
 {
-	t_tbl *tbl;
+	t_tbl	*tbl;
 
 	tbl = philo->tbl;
 	take_forks(philo);
@@ -43,7 +43,7 @@ void	eating(t_phl *philo)
 
 void	take_forks(t_phl *philo)
 {
-	t_tbl *tbl;
+	t_tbl	*tbl;
 
 	tbl = philo->tbl;
 	if (pthread_mutex_lock(&tbl->forks[philo->rf]) != 0)
@@ -56,7 +56,7 @@ void	take_forks(t_phl *philo)
 
 void	sleeping(t_phl *philo)
 {
-	t_tbl *tbl;
+	t_tbl	*tbl;
 
 	tbl = philo->tbl;
 	print_status(philo, "is sleeping");

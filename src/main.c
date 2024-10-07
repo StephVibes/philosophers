@@ -31,4 +31,3 @@ int	main(int argc, char *argv[])
 	cleanup(tbl);
 	return (0);
 }
-

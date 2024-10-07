@@ -2,8 +2,8 @@
 
 long long	time_elapsed(struct timeval start)
 {
-	struct timeval	current;
-	long long	time;
+	struct timeval		current;
+	long long		time;
 
 	gettimeofday(&current, NULL);
 	time = (current.tv_sec - start.tv_sec) * 1000LL + (current.tv_usec
@@ -13,8 +13,8 @@ long long	time_elapsed(struct timeval start)
 
 long long	get_current_time(void)
 {
-	struct timeval	current;
-	long long	time;
+	struct timeval		current;
+	long long		time;
 
 	gettimeofday(&current, NULL);
 	time = (current.tv_sec * 1000LL) + (current.tv_usec / 1000);
@@ -23,9 +23,9 @@ long long	get_current_time(void)
 
 void	ft_usleep(long long microseconds)
 {
-	struct timeval	start;
-	struct timeval	current;
-	long long	elapsed;
+	struct timeval		start;
+	struct timeval		current;
+	long long		elapsed;
 
 	elapsed = 0;
 	gettimeofday(&start, NULL);
