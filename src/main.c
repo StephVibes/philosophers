@@ -28,6 +28,6 @@ int	main(int argc, char *argv[])
 	setting_tbl(tbl, argv, argc);
 	init_philos(tbl);
 	start_philosophers(tbl);
-	//cleanup(tbl);
+	cleanup(tbl);
 	return (0);
 }

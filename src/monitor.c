@@ -32,6 +32,7 @@ static int	check_all_philos_ate_enough(t_tbl *tbl)
 		if (tbl->phls[i].te < tbl->tme)
 			return (0);
 	}
+	tbl->all_ate = 1;
 	close_tbl(tbl);
 	return (1);
 }

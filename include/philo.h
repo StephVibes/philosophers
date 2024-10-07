@@ -22,6 +22,7 @@ typedef struct s_tbl
 {
 	int				num_of_philo;
 	int				philo_died;
+	int				all_ate;
 	int				ready;
 	int				tme;
 	long long				ttd;
