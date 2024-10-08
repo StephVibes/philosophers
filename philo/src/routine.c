@@ -27,6 +27,7 @@ void	*routine(void *arg)
 			exit_error("Error: Failed to lock right fork\n");
 		print_status(philo, "has taken a fork");
 		ft_usleep(tbl->ttd * 1000LL);
+		pthread_mutex_unlock(&tbl->forks[philo->rf]);
 		return (NULL);
 	}
 	if (philo->id % 2 == 0)
@@ -58,12 +59,24 @@ void	take_forks(t_phl *philo)
 	t_tbl	*tbl;
 
 	tbl = philo->tbl;
-	if (pthread_mutex_lock(&tbl->forks[philo->rf]) != 0)
-		exit_error("Error: Failed to lock right fork\n");
-	print_status(philo, "has taken a fork");
-	if (pthread_mutex_lock(&tbl->forks[philo->lf]) != 0)
-		exit_error("Error: Failed to lock left fork\n");
-	print_status(philo, "has taken a fork");
+	if (philo->id % 2 != 0)
+	{
+		if (pthread_mutex_lock(&tbl->forks[philo->lf]) != 0)
+			exit_error("Error: Failed to lock left fork\n");
+		print_status(philo, "has taken a fork");
+		if (pthread_mutex_lock(&tbl->forks[philo->rf]) != 0)
+			exit_error("Error: Failed to lock right fork\n");
+		print_status(philo, "has taken a fork");
+	}
+	else
+	{
+		if (pthread_mutex_lock(&tbl->forks[philo->rf]) != 0)
+			exit_error("Error: Failed to lock right fork\n");
+		print_status(philo, "has taken a fork");
+		if (pthread_mutex_lock(&tbl->forks[philo->lf]) != 0)
+			exit_error("Error: Failed to lock left fork\n");
+		print_status(philo, "has taken a fork");
+	}
 }
 
 void	sleeping(t_phl *philo)
