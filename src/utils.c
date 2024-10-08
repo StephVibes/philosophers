@@ -19,20 +19,14 @@ static int	is_digit(char c)
 	return (0);
 }
 
-void	instructions(void)
+void	input_error(char *str, t_tbl *tbl)
 {
-	printf("**************************************\n");
-	printf("**Instructions**\n");
-	printf("**Example:**\n");
-	printf("  ./philo 5 800 200 200 7\n");
-	printf("  This starts the simulation with 5 philosophers,");
-	printf("where each can survive 800 ms without eating,\n");
-	printf("  takes 200 ms to eat, sleeps for 200 ms,");
-	printf("and each philosopher must eat 7 times.\n\n");
-	printf("****************************************\n\n");
+	free(tbl);
+	printf("%s", str);
+	exit(1);
 }
 
-static char	*validate_input(char *str)
+static char	*validate_input(char *str, t_tbl *tbl)
 {
 	size_t	i;
 
@@ -48,15 +42,15 @@ static char	*validate_input(char *str)
 		i++;
 	}
 	else if (*str == '-')
-		exit_error("Error: Negative number\n");
+		input_error("Error: Argument cannot be negative\n", tbl);
 	while (is_digit(str[i]))
 		i++;
 	if (str[i] != '\0')
-		exit_error("Error: Invalid argument\n");
+		input_error("Error: Argument contains invalid characters\n", tbl);
 	return (str);
 }
 
-long long	ft_atoll(char *str)
+long long	ft_atoll(char *str, t_tbl *tbl)
 {
 	int			i;
 	long long	result;
@@ -64,7 +58,7 @@ long long	ft_atoll(char *str)
 
 	i = 0;
 	result = 0;
-	input = validate_input(str);
+	input = validate_input(str, tbl);
 	while (input[i] >= '0' && input[i] <= '9')
 	{
 		result = result * 10 + (input[i] - '0');

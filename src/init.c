@@ -17,13 +17,13 @@ void	setting_tbl(t_tbl *tbl, char **argv, int argc)
 	int	i;
 
 	i = -1;
-	tbl->num_of_philo = ft_atoll(argv[1]);
-	tbl->ttd = ft_atoll(argv[2]);
-	tbl->tte = ft_atoll(argv[3]);
-	tbl->tts = ft_atoll(argv[4]);
+	tbl->num_of_philo = ft_atoll(argv[1], tbl);
+	tbl->ttd = ft_atoll(argv[2], tbl);
+	tbl->tte = ft_atoll(argv[3], tbl);
+	tbl->tts = ft_atoll(argv[4], tbl);
 	tbl->tme = -1;
 	if (argc == 6)
-		tbl->tme = ft_atoll(argv[5]);
+		tbl->tme = ft_atoll(argv[5], tbl);
 	tbl->phls = malloc(sizeof(t_phl) * tbl->num_of_philo);
 	tbl->forks = malloc(sizeof(pthread_mutex_t) * tbl->num_of_philo);
 	if (!tbl->forks || !tbl->phls)

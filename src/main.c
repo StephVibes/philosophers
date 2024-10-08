@@ -12,19 +12,6 @@
 
 #include "../include/philo.h"
 
-void	cleanup(t_tbl *tbl)
-{
-	int	i;
-
-	i = -1;
-	while (++i < tbl->num_of_philo)
-		pthread_mutex_destroy(&tbl->forks[i]);
-	pthread_mutex_destroy(&tbl->print);
-	free(tbl->forks);
-	free(tbl->phls);
-	free(tbl);
-}
-
 int	main(int argc, char *argv[])
 {
 	t_tbl	*tbl;
@@ -42,4 +29,30 @@ int	main(int argc, char *argv[])
 	start_philosophers(tbl);
 	cleanup(tbl);
 	return (0);
+}
+
+void	cleanup(t_tbl *tbl)
+{
+	int	i;
+
+	i = -1;
+	while (++i < tbl->num_of_philo)
+		pthread_mutex_destroy(&tbl->forks[i]);
+	pthread_mutex_destroy(&tbl->print);
+	free(tbl->forks);
+	free(tbl->phls);
+	free(tbl);
+}
+
+void	instructions(void)
+{
+	printf("**************************************\n");
+	printf("**Instructions**\n");
+	printf("**Example:**\n");
+	printf("  ./philo 5 800 200 200 7\n");
+	printf("  This starts the simulation with 5 philosophers,");
+	printf("where each can survive 800 ms without eating,\n");
+	printf("  takes 200 ms to eat, sleeps for 200 ms,");
+	printf("and each philosopher must eat 7 times.\n\n");
+	printf("****************************************\n\n");
 }

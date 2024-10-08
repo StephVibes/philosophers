@@ -48,9 +48,10 @@ typedef struct s_tbl
 }	t_tbl;
 
 // utils.c
-long long	ft_atoll(char *str);
+long long	ft_atoll(char *str, t_tbl *tbl);
 void		instructions(void);
 void		exit_error(char *str);
+void		cleanup(t_tbl *tbl);
 
 //time.c
 long long	time_elapsed(struct timeval start);
