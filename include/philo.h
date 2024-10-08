@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: smanriqu <smanriqu@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/08 11:36:43 by smanriqu          #+#    #+#             */
+/*   Updated: 2024/10/08 11:36:46 by smanriqu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 # define PHILO_H
 
@@ -14,7 +26,7 @@ typedef struct s_phl
 	int				lf;
 	int				rf;
 	int				te;
-	long long				le;
+	long long		le;
 	struct s_tbl	*tbl;
 }	t_phl;
 
@@ -25,9 +37,9 @@ typedef struct s_tbl
 	int				all_ate;
 	int				ready;
 	int				tme;
-	long long				ttd;
-	long long				tte;
-	long long				tts;
+	long long		ttd;
+	long long		tte;
+	long long		tts;
 	struct timeval	start;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
@@ -37,30 +49,29 @@ typedef struct s_tbl
 
 // utils.c
 long long	ft_atoll(char *str);
-void	instructions(void);
-void	exit_error(char *str);
+void		instructions(void);
+void		exit_error(char *str);
 
 //time.c
-long long		time_elapsed(struct timeval start);
-void	ft_usleep(long long microseconds);
-long long		get_current_time(void);
+long long	time_elapsed(struct timeval start);
+void		ft_usleep(long long microseconds);
+long long	get_current_time(void);
 
 //routine.c
-void	*routine(void *arg);
-void	sleeping(t_phl *philo);
-void	take_forks(t_phl *philo);;
-void	eating(t_phl *philo);
-
+void		*routine(void *arg);
+void		sleeping(t_phl *philo);
+void		take_forks(t_phl *philo);;
+void		eating(t_phl *philo);
 
 //monitor.c
-void	print_status(t_phl *philo, char *status);
-void	*monitor(void *arg);
+void		print_status(t_phl *philo, char *status);
+void		*monitor(void *arg);
 
 // init.c
-void	init_philos(t_tbl *tbl);
-void	start_philosophers(t_tbl *tbl);
-void	setting_tbl(t_tbl *tbl, char **argv, int argc);
-void	create_philos(t_tbl *tbl);
-void	destroy_mutex(t_tbl *tbl);
+void		init_philos(t_tbl *tbl);
+void		start_philosophers(t_tbl *tbl);
+void		setting_tbl(t_tbl *tbl, char **argv, int argc);
+void		create_philos(t_tbl *tbl);
+void		destroy_mutex(t_tbl *tbl);
 
 #endif
