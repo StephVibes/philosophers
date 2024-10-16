@@ -35,6 +35,7 @@ void	setting_tbl(t_tbl *tbl, char **argv, int argc)
 	tbl->philo_died = 0;
 	tbl->ready = 0;
 	tbl->all_ate = 0;
+	gettimeofday(&tbl->start, NULL);
 }
 
 void	init_philos(t_tbl *tbl)
@@ -58,16 +59,15 @@ void	start_philosophers(t_tbl *tbl)
 	int	i;
 
 	i = -1;
+	if (pthread_create(&tbl->monitor_thr, NULL, &monitor, tbl) != 0)
+		destroy_mutex(tbl);
 	while (++i < tbl->num_of_philo)
 	{
 		if (pthread_create(&tbl->phls[i].thread, NULL, &routine,
 				&tbl->phls[i]) != 0)
 			destroy_mutex(tbl);
 	}
-	gettimeofday(&tbl->start, NULL);
 	tbl->ready = 1;
-	if (pthread_create(&tbl->monitor_thr, NULL, &monitor, tbl) != 0)
-		destroy_mutex(tbl);
 	i = -1;
 	if (pthread_join(tbl->monitor_thr, NULL) != 0)
 		destroy_mutex(tbl);
