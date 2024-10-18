@@ -21,15 +21,14 @@ void	*routine(void *arg)
 	tbl = philo->tbl;
 	if (tbl->num_of_philo == 1)
 	{
-		if (pthread_mutex_lock(&tbl->forks[philo->rf]) != 0)
-			exit_error("Error: Failed to lock right fork\n");
+		pthread_mutex_lock(&tbl->forks[philo->rf]);
 		print_status(philo, "has taken a fork");
 		ft_usleep(tbl->ttd * 1000LL);
 		pthread_mutex_unlock(&tbl->forks[philo->rf]);
 		return (NULL);
 	}
-	if (philo->id % 2 == 0)
-		ft_usleep(tbl->tte * 500LL);
+	// if (philo->id % 2 == 0)
+	// 	ft_usleep(tbl->tte * 500LL);
 	while (tbl->philo_died == 0 && tbl->all_ate == 0)
 	{
 		eating(philo);
@@ -45,9 +44,11 @@ void	eating(t_phl *philo)
 	tbl = philo->tbl;
 	take_forks(philo);
 	print_status(philo, "is eating");
+	pthread_mutex_lock(&tbl->death);
 	philo->le = get_current_time();
-	ft_usleep(tbl->tte * 1000LL);
 	philo->te++;
+	pthread_mutex_unlock(&tbl->death);
+	ft_usleep(tbl->tte * 1000LL);
 	pthread_mutex_unlock(&tbl->forks[philo->rf]);
 	pthread_mutex_unlock(&tbl->forks[philo->lf]);
 }

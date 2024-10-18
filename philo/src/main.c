@@ -39,6 +39,7 @@ void	cleanup(t_tbl *tbl)
 	while (++i < tbl->num_of_philo)
 		pthread_mutex_destroy(&tbl->forks[i]);
 	pthread_mutex_destroy(&tbl->print);
+	pthread_mutex_destroy(&tbl->death);
 	free(tbl->forks);
 	free(tbl->phls);
 	free(tbl);

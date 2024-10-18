@@ -1,7 +1,7 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
-PFLAGS = -pthread -fsanitize=thread
+#PFLAGS =-fsanitize=address -pthread #-fsanitize=thread 
 
 SRCS = src/main.c src/utils.c src/init.c src/monitor.c src/time.c src/routine.c
 OBJS = $(SRCS:.c=.o)

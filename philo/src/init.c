@@ -32,8 +32,8 @@ void	setting_tbl(t_tbl *tbl, char **argv, int argc)
 		pthread_mutex_init(&tbl->forks[i], NULL);
 	i = -1;
 	pthread_mutex_init(&tbl->print, NULL);
+	pthread_mutex_init(&tbl->death, NULL);
 	tbl->philo_died = 0;
-	tbl->ready = 0;
 	tbl->all_ate = 0;
 	gettimeofday(&tbl->start, NULL);
 }
@@ -50,7 +50,7 @@ void	init_philos(t_tbl *tbl)
 		tbl->phls[i].rf = (i + 1) % tbl->num_of_philo;
 		tbl->phls[i].te = 0;
 		tbl->phls[i].le = get_current_time();
-		tbl->phls[i].tbl = tbl;
+		tbl->phls[i].tbl = tbl; //TODO: check if this is necessary
 	}
 }
 
@@ -67,15 +67,14 @@ void	start_philosophers(t_tbl *tbl)
 				&tbl->phls[i]) != 0)
 			destroy_mutex(tbl);
 	}
-	tbl->ready = 1;
 	i = -1;
-	if (pthread_join(tbl->monitor_thr, NULL) != 0)
-		destroy_mutex(tbl);
 	while (++i < tbl->num_of_philo)
 	{
 		if (pthread_join(tbl->phls[i].thread, NULL) != 0)
 			destroy_mutex(tbl);
 	}
+	if (pthread_join(tbl->monitor_thr, NULL) != 0)
+		destroy_mutex(tbl);
 }
 
 void	destroy_mutex(t_tbl *tbl)
@@ -86,6 +85,7 @@ void	destroy_mutex(t_tbl *tbl)
 	while (++i < tbl->num_of_philo)
 		pthread_mutex_destroy(&tbl->forks[i]);
 	pthread_mutex_destroy(&tbl->print);
+	pthread_mutex_destroy(&tbl->death);
 	free(tbl->forks);
 	free(tbl->phls);
 	free(tbl);
