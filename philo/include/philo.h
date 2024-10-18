@@ -19,7 +19,6 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-
 typedef struct s_phl
 {
 	pthread_t		thread;
@@ -29,7 +28,7 @@ typedef struct s_phl
 	int				te;
 	long long		le;
 	struct s_tbl	*tbl;
-	pthread_mutex_t t_eaten;
+	pthread_mutex_t	t_eaten;
 }	t_phl;
 
 typedef struct s_tbl
@@ -45,7 +44,7 @@ typedef struct s_tbl
 	struct timeval	start;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
-	pthread_mutex_t death;
+	pthread_mutex_t	death;
 	pthread_mutex_t	flags;
 	pthread_t		monitor_thr;
 	t_phl			*phls;
@@ -67,6 +66,7 @@ void		*routine(void *arg);
 void		sleeping(t_phl *philo);
 void		take_forks(t_phl *philo);;
 void		eating(t_phl *philo);
+void		one_philo(t_tbl *tbl);
 
 //monitor.c
 void		print_status(t_phl *philo, char *status);

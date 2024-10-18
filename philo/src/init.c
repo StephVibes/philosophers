@@ -51,7 +51,7 @@ void	init_philos(t_tbl *tbl)
 		tbl->phls[i].rf = (i + 1) % tbl->num_of_philo;
 		tbl->phls[i].te = 0;
 		tbl->phls[i].le = get_current_time();
-		tbl->phls[i].tbl = tbl; //TODO: check if this is necessary
+		tbl->phls[i].tbl = tbl;
 	}
 }
 

@@ -34,7 +34,6 @@ static int	check_philo_death(t_tbl *tbl)
 	int	i;
 
 	i = -1;
-	
 	while (++i < tbl->num_of_philo)
 	{
 		if (get_current_time() - tbl->phls[i].le > tbl->ttd)
@@ -43,7 +42,8 @@ static int	check_philo_death(t_tbl *tbl)
 			tbl->philo_died = 1;
 			pthread_mutex_unlock(&tbl->flags);
 			pthread_mutex_lock(&tbl->print);
-			printf("%lld %d %s\n", time_elapsed(tbl->start), tbl->phls[i].id, "died");
+			printf("%lld %d %s\n", time_elapsed(tbl->start),
+				tbl->phls[i].id, "died");
 			pthread_mutex_unlock(&tbl->print);
 			return (1);
 		}

@@ -21,10 +21,7 @@ void	*routine(void *arg)
 	tbl = philo->tbl;
 	if (tbl->num_of_philo == 1)
 	{
-		pthread_mutex_lock(&tbl->forks[philo->rf]);
-		print_status(philo, "has taken a fork");
-		ft_usleep(tbl->ttd * 1000LL);
-		pthread_mutex_unlock(&tbl->forks[philo->rf]);
+		one_philo(tbl);
 		return (NULL);
 	}
 	while (1)
@@ -33,7 +30,7 @@ void	*routine(void *arg)
 		if (tbl->philo_died == 1 || tbl->all_ate == 1)
 		{
 			pthread_mutex_unlock(&tbl->flags);
-			break;
+			break ;
 		}
 		pthread_mutex_unlock(&tbl->flags);
 		eating(philo);
@@ -95,4 +92,12 @@ void	sleeping(t_phl *philo)
 		ft_usleep(900LL);
 	else
 		ft_usleep(ttthink * 900LL);
+}
+
+void	one_philo(t_tbl *tbl)
+{
+	pthread_mutex_lock(&tbl->forks[0]);
+	print_status(&tbl->phls[0], "has taken a fork");
+	ft_usleep(tbl->ttd * 1000LL);
+	pthread_mutex_unlock(&tbl->forks[0]);
 }
