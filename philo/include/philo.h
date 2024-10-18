@@ -46,6 +46,7 @@ typedef struct s_tbl
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
 	pthread_mutex_t death;
+	pthread_mutex_t	flags;
 	pthread_t		monitor_thr;
 	t_phl			*phls;
 }	t_tbl;

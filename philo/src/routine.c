@@ -27,10 +27,15 @@ void	*routine(void *arg)
 		pthread_mutex_unlock(&tbl->forks[philo->rf]);
 		return (NULL);
 	}
-	// if (philo->id % 2 == 0)
-	// 	ft_usleep(tbl->tte * 500LL);
-	while (tbl->philo_died == 0 && tbl->all_ate == 0)
+	while (1)
 	{
+		pthread_mutex_lock(&tbl->flags);
+		if (tbl->philo_died == 1 || tbl->all_ate == 1)
+		{
+			pthread_mutex_unlock(&tbl->flags);
+			break;
+		}
+		pthread_mutex_unlock(&tbl->flags);
 		eating(philo);
 		sleeping(philo);
 	}

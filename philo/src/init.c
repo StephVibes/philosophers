@@ -33,6 +33,7 @@ void	setting_tbl(t_tbl *tbl, char **argv, int argc)
 	i = -1;
 	pthread_mutex_init(&tbl->print, NULL);
 	pthread_mutex_init(&tbl->death, NULL);
+	pthread_mutex_init(&tbl->flags, NULL);
 	tbl->philo_died = 0;
 	tbl->all_ate = 0;
 	gettimeofday(&tbl->start, NULL);
@@ -86,6 +87,7 @@ void	destroy_mutex(t_tbl *tbl)
 		pthread_mutex_destroy(&tbl->forks[i]);
 	pthread_mutex_destroy(&tbl->print);
 	pthread_mutex_destroy(&tbl->death);
+	pthread_mutex_destroy(&tbl->flags);
 	free(tbl->forks);
 	free(tbl->phls);
 	free(tbl);

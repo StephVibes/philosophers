@@ -40,6 +40,7 @@ void	cleanup(t_tbl *tbl)
 		pthread_mutex_destroy(&tbl->forks[i]);
 	pthread_mutex_destroy(&tbl->print);
 	pthread_mutex_destroy(&tbl->death);
+	pthread_mutex_destroy(&tbl->flags);
 	free(tbl->forks);
 	free(tbl->phls);
 	free(tbl);

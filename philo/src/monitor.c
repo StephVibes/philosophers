@@ -12,28 +12,18 @@
 
 #include "../include/philo.h"
 
-int	ft_strcmp(const char *s1, const char *s2)
-{
-	while (*s1 && *s2 && *s1 == *s2)
-	{
-		s1++;
-		s2++;
-	}
-	return (*(unsigned char *)s1 - *(unsigned char *)s2);
-}
-
 void	print_status(t_phl *philo, char *status)
 {
 	t_tbl	*tbl;
 
 	tbl = philo->tbl;
-	pthread_mutex_lock(&tbl->death);
-	if ((tbl->philo_died || tbl->all_ate) && ft_strcmp(status, "died"))
+	pthread_mutex_lock(&tbl->flags);
+	if ((tbl->philo_died || tbl->all_ate))
 	{
-		pthread_mutex_unlock(&tbl->death);
+		pthread_mutex_unlock(&tbl->flags);
 		return ;
 	}
-	pthread_mutex_unlock(&tbl->death);
+	pthread_mutex_unlock(&tbl->flags);
 	pthread_mutex_lock(&tbl->print);
 	printf("%lld %d %s\n", time_elapsed(tbl->start), philo->id, status);
 	pthread_mutex_unlock(&tbl->print);
@@ -47,21 +37,16 @@ static int	check_philo_death(t_tbl *tbl)
 	
 	while (++i < tbl->num_of_philo)
 	{
-		//pthread_mutex_lock(&tbl->death);
 		if (get_current_time() - tbl->phls[i].le > tbl->ttd)
 		{
-			//pthread_mutex_lock(&tbl->death);
+			pthread_mutex_lock(&tbl->flags);
 			tbl->philo_died = 1;
-			//printf("trato de morirse\n");
-			//pthread_mutex_unlock(&tbl->death);
-			//print_status(&tbl->phls[i], "died");
+			pthread_mutex_unlock(&tbl->flags);
 			pthread_mutex_lock(&tbl->print);
 			printf("%lld %d %s\n", time_elapsed(tbl->start), tbl->phls[i].id, "died");
 			pthread_mutex_unlock(&tbl->print);
 			return (1);
 		}
-		//pthread_mutex_unlock(&tbl->death);
-		
 	}
 	return (0);
 }
@@ -73,15 +58,14 @@ static int	check_all_philos_ate_enough(t_tbl *tbl)
 	if (tbl->tme == -1)
 		return (0);
 	i = -1;
-	//pthread_mutex_lock(&tbl->death);
 	while (++i < tbl->num_of_philo)
 	{
 		if (tbl->phls[i].te < tbl->tme)
 			return (0);
 	}
-	//pthread_mutex_lock(&tbl->death);
+	pthread_mutex_lock(&tbl->flags);
 	tbl->all_ate = 1;
-	//pthread_mutex_unlock(&tbl->death);
+	pthread_mutex_unlock(&tbl->flags);
 	return (1);
 }
 
